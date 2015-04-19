@@ -5,6 +5,10 @@
   $Id: ipn.php,v 0.4.1.0 beta 2007/02/18 07:08:00 Alex Li Exp $
   Copyright (c) 2007 AlexStudio
 
+  osCommerce Dash Payment Module 
+  bpn.php
+  Copyright (c) 2015 UdjinM6
+  based on
   osCommerce Bitcoin Payment Module 
   bpn.php
   Copyright (c) 2012 David Sterry
@@ -48,7 +52,7 @@
   // Check Transaction ID first!!
 
 
-  // Put some code in here that checks the Bitcoin Payment Notification Key 
+  // Put some code in here that checks the Dash Payment Notification Key 
   // (must be saved in python script's settings.py)
   $bpn_key_query = tep_db_query("select configuration_value from configuration where configuration_key = 'MODULE_PAYMENT_BITCOIN_NOTIFICATION_KEY'");
 
@@ -147,7 +151,7 @@
 
                               'customer_notified' => $customer_notified,
 
-                              'comments' => "Bitcoin Txn " . $result . "\n" . $comment_status);
+                              'comments' => "Dash Txn " . $result . "\n" . $comment_status);
 
       tep_db_perform(TABLE_ORDERS_STATUS_HISTORY, $sql_data_array);
 
@@ -181,7 +185,7 @@
 
     }
 
-    tep_mail(STORE_OWNER, MODULE_PAYMENT_BITCOIN_DEBUG_EMAIL, 'osCommerce Bitcoin: Invalid Request to bpn.php', $email_body, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS);
+    tep_mail(STORE_OWNER, MODULE_PAYMENT_BITCOIN_DEBUG_EMAIL, 'osCommerce Dash: Invalid Request to bpn.php', $email_body, STORE_OWNER, STORE_OWNER_EMAIL_ADDRESS);
 
   }
 

@@ -1,25 +1,25 @@
-osCommerce Bitcoin Payment Module v0.6
+osCommerce Dash Payment Module (based on Bitcoin Payment Module v0.6 https://github.com/weex/oscommerce-bitcoin)
 
-This module enables your osCommerce webstore to accept Bitcoin. 
+This module enables your osCommerce webstore to accept Dash. 
 
-IMPORTANT: This module is currently under development and works with BTC as the default currency only.
+IMPORTANT: This module is currently under development and works with DASH as the default currency only.
 
 
 Features:
 
 * Creates a unique payment address for each order
-* Automatically updates BTCUSD exchange rate
-* Updates order to Processing when payment is received (# of Bitcoin network confirmations is configurable)
-* Forwards excess bitcoins to your off-server forwarding address
-* Python script restarts bitcoind if it becomes unresponsive
-* Bitcoind and monitor.py can be run on a server other than the osCommerce hosting server
+* Automatically updates DASHUSD exchange rate
+* Updates order to Processing when payment is received (# of Dash network confirmations is configurable)
+* Forwards excess Dash to your off-server forwarding address
+* Python script restarts dashd if it becomes unresponsive
+* dashd and monitor.py can be run on a server other than the osCommerce hosting server
 
 
 Requirements:
 
 osCommerce (tested so far only with v2.3.1)
 Python with modules: MySQLdb and simplejson
-bitcoind
+dashd
 
 
 Installation:
@@ -28,17 +28,17 @@ Installation:
 the existing one so if you or any addons have modified that page, you'll want to merge 
 our changes).
 
-2. Enable Bitcoin Payment module
+2. Enable Dash Payment module
 
-3. Fill in bitcoind RPC host:port, user, password, and create a random notification key
+3. Fill in dashd RPC host:port, user, password, and create a random notification key
 
-4. Create BTC currency in osCommerce administration -> Localization -> Currencies with 
-the following settings. For Value enter # of BTC a USD would buy you.
+4. Create DASH currency in osCommerce administration -> Localization -> Currencies with 
+the following settings. For Value enter # of DASH a USD would buy you.
 
-Title: Bitcoin
-Code: BTC
+Title: Dash
+Code: DASH
 Symbol Left:
-Symbol Right: BTC
+Symbol Right: DASH
 Decimal Point: .
 Thousands Point: ,
 Decimal Places: 3
@@ -53,8 +53,8 @@ outside the web root)
 6. Copy ./script/default_settings.py to ./script/settings.py and configure at least 
 BASE_PATH and OSC_URL
 
-7. Make sure bitcoind is running, is in the path, and has an rpcuser and rpcpassword set 
-in .bitcoin/bitcoin.conf
+7. Make sure dashd is running, is in the path, and has an rpcuser and rpcpassword set 
+in .dash/dash.conf
 
 8. Start monitor.py:
 

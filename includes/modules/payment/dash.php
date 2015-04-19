@@ -1,5 +1,11 @@
 <?php
 /* 
+  osCommerce Dash Payment Module
+ 
+  Copyright (c) 2015 UdjinM6
+
+  based on
+
   osCommerce Bitcoin Payment Module
  
   Copyright (c) 2012 David Sterry
@@ -7,14 +13,14 @@
   Released under the GNU General Public License
 
 */
-  class bitcoin {
+  class dash {
     var $code, $title, $description, $enabled;
 
     // class constructor
-    function bitcoin() {
+    function dash() {
       global $order;
 
-      $this->code        = 'bitcoin';
+      $this->code        = 'dash';
       $this->title       = MODULE_PAYMENT_BITCOIN_TEXT_TITLE;
       $this->description = MODULE_PAYMENT_BITCOIN_TEXT_DESCRIPTION;
       $this->sort_order  = MODULE_PAYMENT_BITCOIN_SORT_ORDER;
@@ -75,14 +81,14 @@
       //Here we will generate a new payment address and any other related tasks
       global $order;
 
-      require_once 'bitcoin/jsonRPCClient.php';
+      require_once 'dash/jsonRPCClient.php';
 
-      $bitcoin = new jsonRPCClient('http://'.MODULE_PAYMENT_BITCOIN_LOGIN.':'.MODULE_PAYMENT_BITCOIN_PASSWORD.'@'.MODULE_PAYMENT_BITCOIN_HOST.'/'); 
+      $dash = new jsonRPCClient('http://'.MODULE_PAYMENT_BITCOIN_LOGIN.':'.MODULE_PAYMENT_BITCOIN_PASSWORD.'@'.MODULE_PAYMENT_BITCOIN_HOST.'/'); 
 
       try {
-        $bitcoin->getinfo();
+        $dash->getinfo();
       } catch (Exception $e) {
-        $confirmation = array('title'=>'Error: Bitcoin server is down.  Please email system administrator regarding your order after confirmation.');
+        $confirmation = array('title'=>'Error: Dash server is down.  Please email system administrator regarding your order after confirmation.');
         return $confirmation;
       }
 		
@@ -102,18 +108,18 @@
       global $insert_id, $order;
       $address = $order->customer['email_address'].'-'.tep_create_random_value(32);
 
-      require_once 'bitcoin/jsonRPCClient.php';
+      require_once 'dash/jsonRPCClient.php';
 
-      $bitcoin = new jsonRPCClient('http://'.MODULE_PAYMENT_BITCOIN_LOGIN.':'.MODULE_PAYMENT_BITCOIN_PASSWORD.'@'.MODULE_PAYMENT_BITCOIN_HOST.'/'); 
+      $dash = new jsonRPCClient('http://'.MODULE_PAYMENT_BITCOIN_LOGIN.':'.MODULE_PAYMENT_BITCOIN_PASSWORD.'@'.MODULE_PAYMENT_BITCOIN_HOST.'/'); 
 
       try {
-        $bitcoin->getinfo();
+        $dash->getinfo();
       } catch (Exception $e) {
-        $confirmation = array('title'=>'Error: Bitcoin server is down.  Please email system administrator regarding your order after confirmation.');
+        $confirmation = array('title'=>'Error: Dash server is down.  Please email system administrator regarding your order after confirmation.');
         return $confirmation;
       }
 
-      $address = $bitcoin->getaccountaddress($address);
+      $address = $dash->getaccountaddress($address);
       $order->info['comments'] .= ' | Payment Address: '.$address.' | ';
 
       return false;
@@ -140,15 +146,15 @@
       global $messageStack;
 
       if (defined('MODULE_PAYMENT_BITCOIN_STATUS')) {
-        $messageStack->add_session('Bitcoin module already installed.', 'error');
-        tep_redirect(tep_href_link(FILENAME_MODULES, 'set=payment&module=bitcoin', 'NONSSL'));
+        $messageStack->add_session('Dash module already installed.', 'error');
+        tep_redirect(tep_href_link(FILENAME_MODULES, 'set=payment&module=dash', 'NONSSL'));
         return 'failed';
       }
 
-      tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Bitcoin Module', 'MODULE_PAYMENT_BITCOIN_STATUS', 'True', 'Do you want to accept Bitcoin payments?', '6', '1', 'tep_cfg_select_option(array(\'True\', \'False\'), ', now());");
-      tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Host Address', 'MODULE_PAYMENT_BITCOIN_HOST', 'localhost:8332', 'The host address and port for Bitcoin RPC', '6', '0', now())");
-      tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Username', 'MODULE_PAYMENT_BITCOIN_LOGIN', '', 'The Username for Bitcoin RPC', '6', '0', now())");
-      tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Password', 'MODULE_PAYMENT_BITCOIN_PASSWORD', '', 'The Password for Bitcoin RPC', '6', '0', now())");
+      tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, set_function, date_added) values ('Enable Dash Module', 'MODULE_PAYMENT_BITCOIN_STATUS', 'True', 'Do you want to accept Dash payments?', '6', '1', 'tep_cfg_select_option(array(\'True\', \'False\'), ', now());");
+      tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Host Address', 'MODULE_PAYMENT_BITCOIN_HOST', 'localhost:9998', 'The host address and port for Dash RPC', '6', '0', now())");
+      tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Username', 'MODULE_PAYMENT_BITCOIN_LOGIN', '', 'The Username for Dash RPC', '6', '0', now())");
+      tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Password', 'MODULE_PAYMENT_BITCOIN_PASSWORD', '', 'The Password for Dash RPC', '6', '0', now())");
       tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Sort order of display.', 'MODULE_PAYMENT_BITCOIN_SORT_ORDER', '0', 'Sort order of display. Lowest is displayed first.', '6', '0', now())");
       tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, date_added) values ('Notification Key', 'MODULE_PAYMENT_BITCOIN_NOTIFICATION_KEY', '', 'Authenticates python script to update order status on payment received. Set to more than 15 random characters', '7', '0', now())");
     //tep_db_query("insert into " . TABLE_CONFIGURATION . " (configuration_title, configuration_key, configuration_value, configuration_description, configuration_group_id, sort_order, use_function, set_function, date_added) values ('Payment Zone', 'MODULE_PAYMENT_BITCOIN_ZONE', '0', 'If a zone is selected, only enable this payment method for that zone.', '6', '2', 'tep_get_zone_class_title', 'tep_cfg_pull_down_zone_classes(', now())");
